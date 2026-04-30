@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Arlek — websites &amp; automations for Canadian small businesses</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Arlek is a one-person studio in Ottawa building modern websites and quiet automations for Canadian small businesses.">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080809; --bg-2: #0F0F11;
+    --fg: #FAFAFA; --fg-2: #B7B7BD; --fg-3: #75757C;
+    --line: rgba(250,250,250,.08); --line-2: rgba(250,250,250,.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg); color: var(--fg);
+    font-family: 'Satoshi', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; font-feature-settings: "ss01","ss02";
+  }
+
+  .top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 40px; border-bottom: 1px solid var(--line);
+  }
+  .top .left { display: flex; align-items: center; gap: 16px; }
+  .mark { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+  .mark span { color: var(--fg-3); font-weight: 400; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 11.5px; font-weight: 500; color: var(--fg-2);
+    padding: 4px 10px; border: 1px solid var(--line-2); border-radius: 999px;
+  }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: #6BCB77; box-shadow: 0 0 6px #6BCB77; }
+  .book {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--fg); color: var(--bg);
+    padding: 9px 18px; border-radius: 999px; text-decoration: none;
+    font-weight: 600; font-size: 13px;
+  }
+  .book:hover { background: #fff; }
+
+  .hero {
+    padding: 88px 40px 56px; border-bottom: 1px solid var(--line);
+  }
+  .hero .h1 {
+    font-size: clamp(38px, 5.2vw, 76px);
+    line-height: 1.02; letter-spacing: -.03em; font-weight: 600;
+    max-width: 19ch;
+  }
+  .hero .h1 .dim { color: var(--fg-3); }
+
+  .sh {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 28px 40px 14px;
+  }
+  .sh .t { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
+  .sh .c { font-size: 12px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+
+  .work { padding: 0 40px 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .proj { cursor: pointer; display: flex; flex-direction: column; gap: 10px; }
+  .proj .media {
+    aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden;
+    background: var(--bg-2); border: 1px solid var(--line);
+    transition: border-color .25s, transform .25s;
+  }
+  .proj:hover .media { border-color: var(--line-2); transform: translateY(-2px); }
+  .proj.zn .media { background: linear-gradient(135deg, #1a1d24, #2a2f3a); }
+  .proj.pc .media { background: linear-gradient(135deg, #0f1220, #1c2140); }
+  .proj.sp .media { background: linear-gradient(135deg, #181614, #2a2520); }
+  .proj.sm .media { background: linear-gradient(135deg, #0e1a14, #1a2e24); }
+  .proj.ij .media { background: linear-gradient(135deg, #201418, #2e1d25); }
+  .proj .head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .proj .name { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+  .proj .tag { font-size: 11px; font-weight: 500; color: var(--fg-3); text-transform: uppercase; white-space: nowrap; }
+  .proj .desc { font-size: 13px; line-height: 1.45; color: var(--fg-2); }
+
+  .close {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px;
+    padding: 48px 40px; border-top: 1px solid var(--line);
+    align-items: center;
+  }
+  .close .h { font-size: clamp(22px, 2.4vw, 30px); line-height: 1.2; letter-spacing: -.02em; font-weight: 600; }
+  .close .h .dim { color: var(--fg-3); }
+  .close .ctas { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+  .close .ctas a {
+    text-decoration: none; font-weight: 600; font-size: 13px; padding: 10px 18px;
+    border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .close .ctas .primary { background: var(--fg); color: var(--bg); }
+  .close .ctas .secondary { color: var(--fg-2); border: 1px solid var(--line-2); }
+  .close .ctas .secondary:hover { color: var(--fg); border-color: var(--fg); }
+
+  .foot {
+    padding: 14px 40px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--fg-3);
+  }
+  .foot a { color: var(--fg-3); text-decoration: none; }
+  .foot a:hover { color: var(--fg); }
+
+  .decision {
+    padding: 32px 40px 56px; border-top: 1px solid var(--line-2);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start;
+  }
+  .decision .q { font-size: 18px; font-weight: 600; letter-spacing: -.01em; max-width: 28ch; }
+  .decision .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice {
+    padding: 12px 16px; border: 1px solid var(--line-2); border-radius: 5px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: transparent; color: var(--fg); cursor: pointer; font-size: 13px; font-weight: 500;
+  }
+  .choice:hover { border-color: var(--fg); background: var(--bg-2); }
+  .choice.selected { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .choice .k { font-size: 11px; color: var(--fg-3); margin-right: 12px; }
+  .choice.selected .k { color: var(--bg); opacity: .6; }
+
+  @media (max-width: 860px) {
+    .top, .hero, .sh, .work, .close, .foot, .decision { padding-left: 20px; padding-right: 20px; }
+    .top .pill { display: none; }
+    .hero { padding-top: 56px; padding-bottom: 36px; }
+    .work { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .close { grid-template-columns: 1fr; gap: 18px; }
+    .close .ctas { justify-content: flex-start; }
+    .decision { grid-template-columns: 1fr; gap: 16px; }
+    .foot { flex-direction: column; gap: 6px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="left">
+    <div class="mark">Arlek<span>.ca</span></div>
+    <span class="pill"><span class="dot"></span>Available · April 2026</span>
+  </div>
+  <a class="book" href="#book">Book a call →</a>
+</div>
+
+<section class="hero">
+  <h1 class="h1">Modern websites and quiet automations <span class="dim">for Canadian small businesses.</span></h1>
+</section>
+
+<div class="sh">
+  <div class="t">Selected work</div>
+  <div class="c">05 · 2024–2026</div>
+</div>
+
+<section class="work">
+  <a class="proj zn">
+    <div class="media"></div>
+    <div class="head"><div class="name">Zinc North</div><div class="tag">Client</div></div>
+    <div class="desc">Industrial plating &amp; coating manufacturer. Site rebuild on Cloudflare Workers.</div>
+  </a>
+  <a class="proj pc">
+    <div class="media"></div>
+    <div class="head"><div class="name">PianoChords</div><div class="tag">Product</div></div>
+    <div class="desc">Interactive chord &amp; progression explorer for pianists.</div>
+  </a>
+  <a class="proj sm">
+    <div class="media"></div>
+    <div class="head"><div class="name">Spend Monitor</div><div class="tag">Automation</div></div>
+    <div class="desc">Parses bank emails, classifies transactions, monthly view with alerts.</div>
+  </a>
+  <a class="proj sp">
+    <div class="media"></div>
+    <div class="head"><div class="name">Sonja Paints</div><div class="tag">Portfolio</div></div>
+    <div class="desc">Sanity-backed portfolio for a contemporary painter.</div>
+  </a>
+  <a class="proj ij">
+    <div class="media"></div>
+    <div class="head"><div class="name">Inside Joke</div><div class="tag">Pro-bono</div></div>
+    <div class="desc">Lightweight content site.</div>
+  </a>
+</section>
+
+<section class="close">
+  <div class="h">Site dated, slow, or embarrassing to send? <span class="dim">Let's fix that.</span></div>
+  <div class="ctas">
+    <a class="primary" href="#">Book a 20-min call →</a>
+    <a class="secondary" href="#">Send a note</a>
+  </div>
+</section>
+
+<div class="foot">
+  <div>© 2026 Arlek</div>
+  <div><a href="mailto:hello@arlek.ca">hello@arlek.ca</a></div>
+</div>
+
+</body>
+</html>
