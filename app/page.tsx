@@ -8,9 +8,11 @@ export default function Home() {
   return (
     <>
       <TopBar />
-      <Hero />
-      <Work />
-      <CTA />
+      <main>
+        <Hero />
+        <Work />
+        <CTA />
+      </main>
       <Footer />
     </>
   );
