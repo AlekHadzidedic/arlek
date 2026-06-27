@@ -11,8 +11,16 @@ const satoshi = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Arlek",
-  description: "Arlek – creative studio",
+  title: "Arlek — websites & automations for Canadian small businesses",
+  description:
+    "Arlek is a one-person studio in Ottawa building modern websites and quiet automations for Canadian small businesses.",
+  openGraph: {
+    title: "Arlek — websites & automations for Canadian small businesses",
+    description:
+      "Arlek is a one-person studio in Ottawa building modern websites and quiet automations for Canadian small businesses.",
+    type: "website",
+    url: "https://arlek.ca",
+  },
 };
 
 export default function RootLayout({
