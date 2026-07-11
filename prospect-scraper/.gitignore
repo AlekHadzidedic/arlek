@@ -1,0 +1,4 @@
+# Firecrawl scrape cache (regenerable)
+.cache/
+_smoketest/
+.firecrawl/
