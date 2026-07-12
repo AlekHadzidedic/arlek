@@ -13,5 +13,11 @@ test("renders every project name and description", () => {
 test("renders the selected-work section head", () => {
   render(<Work />);
   expect(screen.getByText("Selected work")).toBeInTheDocument();
-  expect(screen.getByText("05 · 2024–2026")).toBeInTheDocument();
+  expect(screen.getByText("03 · 2024–2026")).toBeInTheDocument();
+});
+
+test("does not render cut projects", () => {
+  render(<Work />);
+  expect(screen.queryByText("Spend Monitor")).not.toBeInTheDocument();
+  expect(screen.queryByText("Inside Joke")).not.toBeInTheDocument();
 });
