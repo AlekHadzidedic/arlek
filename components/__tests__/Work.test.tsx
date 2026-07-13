@@ -21,3 +21,10 @@ test("does not render cut projects", () => {
   expect(screen.queryByText("Spend Monitor")).not.toBeInTheDocument();
   expect(screen.queryByText("Inside Joke")).not.toBeInTheDocument();
 });
+
+test("renders every project's screenshot", () => {
+  render(<Work />);
+  for (const p of projects) {
+    expect(screen.getByAltText(p.alt)).toBeInTheDocument();
+  }
+});
