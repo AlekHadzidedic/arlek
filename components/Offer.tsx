@@ -22,10 +22,15 @@ export default function Offer() {
   return (
     <div className="border-t border-line">
       <SectionHead label="What I do" counter="01–03" />
-      <section className="grid grid-cols-1 gap-7 px-5 pb-10 md:grid-cols-3 md:gap-[18px] md:px-10">
-        {services.map((s) => (
-          <div key={s.num} className="flex flex-col gap-2.5">
-            <div className="text-xs tabular-nums text-fg-3">{s.num}</div>
+      <section className="grid grid-cols-1 gap-7 px-5 pb-12 pt-2 md:grid-cols-3 md:gap-0 md:px-10 md:pt-6">
+        {services.map((s, i) => (
+          <div
+            key={s.num}
+            className={`flex flex-col gap-3 ${
+              i > 0 ? "md:border-l md:border-line md:pl-6" : ""
+            } ${i < services.length - 1 ? "md:pr-6" : ""}`}
+          >
+            <div className="text-2xl font-medium tabular-nums text-fg-3">{s.num}</div>
             <div className="text-base font-semibold tracking-[-0.01em]">{s.title}</div>
             <div className="text-[13px] leading-[1.45] text-fg-2">{s.desc}</div>
           </div>

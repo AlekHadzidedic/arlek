@@ -7,7 +7,7 @@ export default function TopBar() {
         </div>
         <span className="hidden items-center gap-[7px] rounded-full border border-line-2 px-2.5 py-1 text-[11.5px] font-medium text-fg-2 md:inline-flex">
           <span className="h-1.5 w-1.5 rounded-full bg-[#6BCB77] shadow-[0_0_6px_#6BCB77]" />
-          Available · April 2026
+          Available for new projects
         </span>
       </div>
       <a

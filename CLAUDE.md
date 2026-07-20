@@ -7,7 +7,7 @@ Portfolio / agency landing site.
 - Tailwind v4 (`@tailwindcss/postcss`)
 - TypeScript
 - pnpm (lockfile committed; `pnpm-workspace.yaml` sets `onlyBuiltDependencies: sharp, unrs-resolver` — no sub-packages, root is the app)
-- Tests: Vitest + Testing Library (`pnpm test`)
+- Tests: Vitest + Testing Library (`pnpm test`). NOT required for small/trivial copy or layout changes on this site — don't write or run tests for those, and don't block on stale assertions.
 
 ## Structure
 - `app/page.tsx` — single landing page: `TopBar → Hero → Work → Offer → About → CTA → Footer`
