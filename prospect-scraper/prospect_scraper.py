@@ -148,11 +148,28 @@ GENERIC_LOCALPARTS = {"info", "sales", "contact", "office", "admin", "general",
 
 HERE = Path(__file__).resolve().parent
 CACHE_DIR = HERE / ".cache"
+
+
+def load_env():
+    """Load KEY=VALUE lines from a local .env (untracked) into os.environ."""
+    ef = HERE / ".env"
+    if not ef.exists():
+        return
+    for line in ef.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        os.environ.setdefault(k.strip(), v.strip())
 SERVER_CACHE_MS = 7 * 24 * 3600 * 1000  # reuse Firecrawl server cache up to 7 days
 
 SCHEMA = ["business_name", "vertical", "group", "website_url", "city_area", "email",
-          "email_source_url", "owner_name", "phone", "site_score", "site_signals",
-          "size_check", "optout_notice", "qualified", "disqualify_reason", "notes"]
+          "email_source_url", "owner_name", "phone", "google_rating", "google_reviews",
+          "site_score", "site_signals", "size_check", "optout_notice", "qualified",
+          "lead_score", "disqualify_reason", "notes"]
+
+# Review-volume floor: a rating only counts as "stellar" above this many reviews.
+MIN_REVIEWS_FOR_STELLAR = 5
 
 
 # --------------------------------------------------------------------------
@@ -225,6 +242,75 @@ def fc_scrape(url):
            "metadata": data.get("metadata", {}) or {}}
     cf.write_text(json.dumps(res), encoding="utf-8")
     return res
+
+
+# --------------------------------------------------------------------------
+# Google Places (New) — review rating + count, verified by website domain
+# --------------------------------------------------------------------------
+
+def fc_places(name, domain, city_hint="Ottawa Ontario"):
+    """Return (rating|None, review_count|None). Cached. Verified against domain
+    when Places returns a websiteUri, so we don't attach a wrong business's stars."""
+    key = os.environ.get("GOOGLE_MAPS_API_KEY")
+    if not key:
+        return None, None
+    CACHE_DIR.mkdir(exist_ok=True)
+    ck = CACHE_DIR / ("places_" + hashlib.sha1((domain or name).encode()).hexdigest()[:16] + ".json")
+    if ck.exists():
+        try:
+            d = json.loads(ck.read_text(encoding="utf-8"))
+            return d.get("rating"), d.get("count")
+        except Exception:
+            pass
+
+    def query(text):
+        body = json.dumps({"textQuery": text, "maxResultCount": 5}).encode()
+        req = urllib.request.Request(
+            "https://places.googleapis.com/v1/places:searchText", data=body,
+            headers={"Content-Type": "application/json", "X-Goog-Api-Key": key,
+                     "X-Goog-FieldMask": "places.displayName,places.rating,"
+                     "places.userRatingCount,places.websiteUri"})
+        try:
+            with urllib.request.urlopen(req, timeout=25) as r:
+                return json.loads(r.read()).get("places", []) or []
+        except Exception:
+            return []
+
+    rating = count = None
+    places = query(f"{name} {city_hint}") or query(f"{domain} {city_hint}")
+    # 1) prefer a result whose website domain matches our candidate
+    match = None
+    for p in places:
+        wu = p.get("websiteUri", "")
+        if wu and reg_domain(wu) == domain:
+            match = p; break
+    # 2) else fall back to the top result only if the name overlaps (avoid mismatch)
+    if match is None and places:
+        top = places[0]
+        tname = (top.get("displayName", {}) or {}).get("text", "").lower()
+        toks = {w for w in re.findall(r"[a-z]{4,}", name.lower())}
+        if toks and any(t in tname for t in toks):
+            match = top
+    if match:
+        rating = match.get("rating")
+        count = match.get("userRatingCount")
+    ck.write_text(json.dumps({"rating": rating, "count": count}), encoding="utf-8")
+    return rating, count
+
+
+def lead_score(site_score, rating, count):
+    """Rank leads: bad website is the base; stellar reviews (with real volume)
+    and review volume add on top. Great-business + trash-site floats to the top."""
+    score = float(site_score)
+    if rating is not None and count and count >= MIN_REVIEWS_FOR_STELLAR:
+        if rating >= 4.8:
+            score += 4.0
+        elif rating >= 4.5:
+            score += 2.5
+        elif rating >= 4.0:
+            score += 1.0
+        score += min(count / 50.0, 2.0)   # up to +2 for high review volume
+    return round(score, 1)
 
 
 # --------------------------------------------------------------------------
@@ -493,7 +579,8 @@ def evaluate(cand, label, group, max_pages):
     # business name: metadata title -> og:site_name -> search title, cleaned.
     md = pages[0][1].get("metadata", {})
     meta_title = md.get("title") or md.get("ogSiteName") or cand["title"] or ""
-    name = re.split(r"[|\-–—:•·]", meta_title)[0].strip()
+    # split only on space-padded separators, so hyphenated brands survive (Zeal-Tek)
+    name = re.split(r"\s[|\-–—:•·]\s|\s[|–—]\s?", meta_title)[0].strip(" |-–—:")
     generic = {"", "home", "homepage", "welcome", "index", "contact", "about",
                "about us", "contact us", "untitled"}
     if name.lower() in generic:
@@ -503,6 +590,7 @@ def evaluate(cand, label, group, max_pages):
         root = domain.split(".")[0].replace("-", " ")
         name = root.title()
 
+    rating, rcount = fc_places(name, domain)
     qualified = size_pass and score >= 3 and bool(email) and not optout
     reasons = []
     if not size_pass:
@@ -519,10 +607,13 @@ def evaluate(cand, label, group, max_pages):
         "website_url": home, "city_area": "",
         "email": email, "email_source_url": email_src if email else "",
         "owner_name": "", "phone": phone,
+        "google_rating": "" if rating is None else rating,
+        "google_reviews": "" if rcount is None else rcount,
         "site_score": score, "site_signals": ";".join(signals),
         "size_check": size_reason,
         "optout_notice": "TRUE" if optout else "FALSE",
         "qualified": "TRUE" if qualified else "FALSE",
+        "lead_score": lead_score(score, rating, rcount),
         "disqualify_reason": "" if qualified else "; ".join(reasons),
         "notes": "", "_excerpt": excerpt,
     }
@@ -562,6 +653,7 @@ def main():
     ap.add_argument("--no-judge", action="store_true", help="skip Haiku pass (0 tokens)")
     ap.add_argument("--out", default=str(HERE), help="output directory")
     args = ap.parse_args()
+    load_env()
 
     want = [v.strip() for v in args.verticals.split(",") if v.strip()] or list(VERTICALS)
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
@@ -620,7 +712,8 @@ def main():
     order = {"qualified": 0, "phone": 1, "score2": 2, "unqualified": 3}
     for r in merged:
         r["tier"] = tier_of(r)
-    merged.sort(key=lambda r: (order[r["tier"]], -int(r["site_score"])))
+    # within each tier, rank by lead_score (site badness + review quality/volume)
+    merged.sort(key=lambda r: (order[r["tier"]], -float(r.get("lead_score", 0) or 0)))
 
     # write outputs
     write_csv(out / "prospects-master.csv", ["tier"] + SCHEMA, merged)
@@ -643,6 +736,17 @@ def main():
              "| Vertical | Group | Evaluated | Qualified |", "|---|---|---|---|"]
     for vid, (label, group, n, q) in per_vert.items():
         lines.append(f"| {label} | {group} | {n} | {q} |")
+
+    top = sorted([r for r in merged if r["tier"] in ("qualified", "phone", "score2")],
+                 key=lambda r: -float(r.get("lead_score", 0) or 0))[:10]
+    lines += ["", "## Top 10 leads by lead_score",
+              "(bad website + stellar reviews-with-volume rank highest)", "",
+              "| # | Business | Vertical | Site | Rating | Reviews | lead_score | Email |",
+              "|---|---|---|---|---|---|---|---|"]
+    for i, r in enumerate(top, 1):
+        lines.append(f"| {i} | {r['business_name']} | {r['vertical']} | {r['site_score']} | "
+                     f"{r.get('google_rating','')} | {r.get('google_reviews','')} | "
+                     f"{r.get('lead_score','')} | {r['email']} |")
     (out / "run-summary.md").write_text("\n".join(lines), encoding="utf-8")
 
     print(f"\nDONE. {len(merged)} rows -> {out}", file=sys.stderr)
