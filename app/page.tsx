@@ -1,7 +1,7 @@
 import TopBar from "../components/TopBar";
 import Hero from "../components/Hero";
 import Work from "../components/Work";
-import Spotlight from "../components/Spotlight";
+import Rebuild from "../components/Rebuild";
 import Offer from "../components/Offer";
 import About from "../components/About";
 import CTA from "../components/CTA";
@@ -14,7 +14,7 @@ export default function Home() {
       <main>
         <Hero />
         <Work />
-        <Spotlight />
+        <Rebuild />
         <Offer />
         <About />
         <CTA />
