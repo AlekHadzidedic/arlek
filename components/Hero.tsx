@@ -1,4 +1,4 @@
-import Decode, { STAGGER_MS } from "./Decode";
+import Decode from "./Decode";
 
 const LINE_1 = "Websites and automation";
 const LINE_2 = "for Canadian small businesses.";
@@ -11,7 +11,7 @@ export default function Hero() {
         <Decode
           text={LINE_2}
           className="text-fg-3"
-          delay={LINE_1.length * STAGGER_MS}
+          indexOffset={LINE_1.length}
         />
       </h1>
     </section>

@@ -34,6 +34,6 @@ test("headings form an outline with no skipped levels", () => {
 
 test("the rebuild testimonial is attributed to Eric", () => {
   render(<Home />);
-  expect(screen.getByText(/I highly recommend Alek/)).toBeInTheDocument();
+  expect(screen.getByText(/The final result exceeded my expectations/)).toBeInTheDocument();
   expect(screen.getByText("Eric")).toBeInTheDocument();
 });
