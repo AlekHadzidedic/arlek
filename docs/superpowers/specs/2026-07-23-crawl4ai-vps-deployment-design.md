@@ -159,3 +159,15 @@ User wanted **native** deep-crawl (not the client-side workaround). The block wa
 - **Verified live:** native `BFSDeepCrawlStrategy` (5 pages depth 1), filtered deep-crawl (`URLPatternFilter *core*` → 8 pages all `/core/`), `session_id`+`js_code` crawl (200). Skills `crawl4ai-crawl` (native deep-crawl + strategies/filters/scorers) and `crawl4ai-interact` (stateful sessions) updated accordingly.
 - **Tradeoff:** re-opens SSRF surface (token-holder can drive `js_code`/proxy/deep-crawl) — accepted for a private token-gated box; pages/depth still clamped by governor.
 - **Revert:** drop the `api.py`/`server.py` mounts from the override → `docker compose up -d crawl4ai`. **On image-tag change:** re-extract + re-sed both files.
+
+### Addendum 3 — bake-in + Firecrawl removal (same day)
+
+User: "I don't want to remember this" + "no more Firecrawl, all crawling via crawl4ai."
+
+**Bake-in — patch moved from bind-mount to a derived image.** Container runs as non-root `appuser`, so boot-time sed can't touch root-owned `/app`. Solution: `/docker/crawl4ai/Dockerfile` FROM the pinned base, `sed UNTRUSTED→TRUSTED` as root at build (+ a `grep` self-check that fails the build if upstream renames the field), `USER appuser` restored. Override now uses `build:` (BASE arg) → image `crawl4ai-trusted:0.9.2`; the `api.py`/`server.py` file-mounts and standalone copies were removed. Result: patch survives restarts/reboots with **zero maintenance**; a version bump = change `BASE` + `docker compose build crawl4ai && up -d`. Verified: build passed self-check, runtime uid=999 (appuser), deep-crawl still 200. Revert = set `image: unclecode/crawl4ai:0.9.2` (drop `build:`).
+
+**Firecrawl removed** (crawl4ai is the sole crawler):
+- Plugin `firecrawl@claude-plugins-official` → `false` in `~/.claude/settings.json`.
+- 12 `~/.claude/skills/firecrawl*` symlinks deleted (targets remain in `~/.agents/skills/` — reversible).
+- All "Firecrawl" references stripped from the crawl4ai skills.
+- `CLAUDE.md` now mandates crawl4ai-only for all scraping/crawling; memory updated.
