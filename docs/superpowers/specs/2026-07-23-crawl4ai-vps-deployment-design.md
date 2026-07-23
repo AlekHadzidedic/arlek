@@ -137,3 +137,16 @@ Deployed live. n8n + traefik never restarted (both "Up 2 days" throughout); all 
 **Remaining (manual — needs n8n UI, Claude can't edit n8n DB):** P4 — swap Firecrawl nodes in n8n workflows to crawl4ai (`/scrape`→`/md`, `/crawl`→`/crawl` or `/crawl/job`) using internal URL `http://crawl4ai:11235` + Bearer token; then cancel the Firecrawl subscription once parity confirmed.
 
 **Regenerate token if ever needed:** edit `CRAWL4AI_API_TOKEN` in `/docker/n8n/.env` → `docker compose up -d crawl4ai`, then update `~/.claude/crawl4ai.env` and the MCP header (`claude mcp remove crawl4ai -s user` + re-add).
+
+### Addendum — skill suite + REST trust boundary (same day)
+
+Dogfooded crawl4ai to crawl its own docs (docs.crawl4ai.com), then built a **skill suite** from what the live server actually supports (every recipe verified against `crawl.arlek.online`):
+
+- `crawl4ai` (umbrella: overview/MCP/REST/ops) · `crawl4ai-crawl` (batch + links site-crawl) · `crawl4ai-extract` (CSS/XPath/regex JSON) · `crawl4ai-interact` (`/execute_js`). All in `~/.claude/skills/`.
+
+**0.9.2 trust boundary discovered (all HTTP configs load as `Provenance.UNTRUSTED`, hardcoded in `api.py`):**
+- `deep_crawl_strategy` (auto link-following) → **400 rejected** over REST. Workaround baked into `crawl4ai-crawl`: batch explicit URL list (≤100) + follow the `links` a scrape returns. Recursive crawl is SDK/trusted-only.
+- `session_id`, in-crawl `js_code`, proxy → forbidden. No stateful multi-step flows over REST.
+- `/execute_js` was disabled by default; **enabled** via `CRAWL4AI_EXECUTE_JS_ENABLED=true` (added to `.env` + override; reversible). Single-load JS only.
+- Verified working over REST: `/md`, `/crawl` (batch), `JsonCssExtractionStrategy` extraction, `/execute_js`, `/screenshot`, `/pdf`.
+- LLM extraction (`LLMExtractionStrategy`, `/llm/job`) still needs a server LLM key — not configured.
