@@ -108,3 +108,32 @@
 - Migrating existing scraped data.
 - Multi-node / autoscaling crawl4ai.
 - Changing n8n's own hosting or the arlek.ca site.
+
+---
+
+## AS-BUILT (completed 2026-07-23)
+
+Deployed live. n8n + traefik never restarted (both "Up 2 days" throughout); all changes additive.
+
+**VPS:** `root@srv1317127.hstgr.cloud` (IP `76.13.118.111`), Ubuntu, Docker 29 / Compose v5. SSH alias `vps` → key `~/.ssh/vps_crawl4ai` (dedicated ed25519, laptop-only).
+
+**Discovered stack:** Traefik v3.6 (`n8n-traefik-1`) fronting `n8n.arlek.online`, TLS via Cloudflare **DNS-01** (resolver `myresolver`, `CF_DNS_API_TOKEN`). Domain **`arlek.online`** (CF zone `fcf2d0aad6d1c4f43b4c25ccffac0260`). Box: 3.9GB RAM, **0 swap** originally.
+
+**What was deployed:**
+- **Image:** `unclecode/crawl4ai:0.9.2` (pinned).
+- **Compose:** new `crawl4ai` service in `/docker/n8n/docker-compose.override.yml` (auto-merged; n8n's `docker-compose.yml` byte-for-byte untouched, `.bak` taken anyway). `shm_size: 1gb`, `mem_limit: 2560m`, `restart: unless-stopped`, no host port publish (docker network only), Traefik labels mirroring n8n's.
+- **Config:** `/docker/crawl4ai/config.yml` (extracted from the image, then tuned): `app.host 0.0.0.0`, `crawler.pool.max_pages 6`, `crawler.memory_threshold_percent 85`, `limits.max_pages 25`, `limits.wall_clock_s 180`, `limits.queue.workers 2`.
+- **Auth:** static `CRAWL4AI_API_TOKEN` (64-hex) in `/docker/n8n/.env` → enforced Bearer on all endpoints (unauthed = 401). Binding `0.0.0.0` *requires* this token (startup guard). `trusted_hosts:["*"]` and no `SECRET_KEY` left as-is by design (Traefik constrains public Host; static token, not JWT).
+- **Swap:** 4GB `/swapfile` added (persisted in `/etc/fstab`).
+- **DNS:** `A crawl.arlek.online → 76.13.118.111`, proxied=false (mirrors n8n). TLS auto-issued by Traefik.
+- **Public URL:** `https://crawl.arlek.online` (valid cert). **Internal:** `http://crawl4ai:11235`.
+
+**Claude Code integration:**
+- **MCP:** registered user-scope, SSE → `https://crawl.arlek.online/mcp/sse` with Bearer header (`~/.claude.json`). `claude mcp list` = `✔ Connected`. Tools: `md, html, screenshot, pdf, execute_js, crawl, ask`.
+- **Skill:** `~/.claude/skills/crawl4ai/SKILL.md` (global). Creds: `~/.claude/crawl4ai.env`.
+
+**Verification (all passed):** internal authed `/md` 200 + unauthed 401; public authed `/md` 200 + unauthed 401; valid TLS (no `-k`); MCP connected; skill REST fallback scraped example.com + docs.crawl4ai.com; `n8n.arlek.online` still 200; crawl4ai `healthy`, `unless-stopped`.
+
+**Remaining (manual — needs n8n UI, Claude can't edit n8n DB):** P4 — swap Firecrawl nodes in n8n workflows to crawl4ai (`/scrape`→`/md`, `/crawl`→`/crawl` or `/crawl/job`) using internal URL `http://crawl4ai:11235` + Bearer token; then cancel the Firecrawl subscription once parity confirmed.
+
+**Regenerate token if ever needed:** edit `CRAWL4AI_API_TOKEN` in `/docker/n8n/.env` → `docker compose up -d crawl4ai`, then update `~/.claude/crawl4ai.env` and the MCP header (`claude mcp remove crawl4ai -s user` + re-add).
