@@ -150,3 +150,12 @@ Dogfooded crawl4ai to crawl its own docs (docs.crawl4ai.com), then built a **ski
 - `/execute_js` was disabled by default; **enabled** via `CRAWL4AI_EXECUTE_JS_ENABLED=true` (added to `.env` + override; reversible). Single-load JS only.
 - Verified working over REST: `/md`, `/crawl` (batch), `JsonCssExtractionStrategy` extraction, `/execute_js`, `/screenshot`, `/pdf`.
 - LLM extraction (`LLMExtractionStrategy`, `/llm/job`) still needs a server LLM key — not configured.
+
+### Addendum 2 — trust patch enabling native deep-crawl (same day)
+
+User wanted **native** deep-crawl (not the client-side workaround). The block was a single hardcoded `Provenance.UNTRUSTED` on request-config loads in `api.py`/`server.py` — the deep-crawl code path (`clamp_deep_crawl`, `deep_crawl_strategy` handling) is otherwise intact, and `governor.py` still caps pages/depth. Decision (user-approved): **treat authenticated requests as trusted** — the API is token-gated, so the token *is* the trust boundary.
+
+- Extracted `/app/api.py` + `/app/server.py` from the pinned image → `/docker/crawl4ai/`, sed `provenance=Provenance.UNTRUSTED`→`TRUSTED` (8 sites), bind-mounted read-only over `/app/` in the override. Syntax-checked before restart; crawl4ai recreated only; n8n untouched.
+- **Verified live:** native `BFSDeepCrawlStrategy` (5 pages depth 1), filtered deep-crawl (`URLPatternFilter *core*` → 8 pages all `/core/`), `session_id`+`js_code` crawl (200). Skills `crawl4ai-crawl` (native deep-crawl + strategies/filters/scorers) and `crawl4ai-interact` (stateful sessions) updated accordingly.
+- **Tradeoff:** re-opens SSRF surface (token-holder can drive `js_code`/proxy/deep-crawl) — accepted for a private token-gated box; pages/depth still clamped by governor.
+- **Revert:** drop the `api.py`/`server.py` mounts from the override → `docker compose up -d crawl4ai`. **On image-tag change:** re-extract + re-sed both files.
