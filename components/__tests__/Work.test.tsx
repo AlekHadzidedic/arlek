@@ -1,12 +1,23 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Work from "../Work";
 import { projects } from "../../content/projects";
 
-test("renders every project name and description", () => {
+test("renders every project as an index row with its tagline and stack", () => {
   render(<Work />);
   for (const p of projects) {
-    expect(screen.getByText(p.name)).toBeInTheDocument();
-    expect(screen.getByText(p.desc)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: p.name })).toBeInTheDocument();
+    expect(screen.getByText(p.tagline)).toBeInTheDocument();
+    expect(screen.getByText(p.stack)).toBeInTheDocument();
+  }
+});
+
+test("every row links out to the live site", () => {
+  render(<Work />);
+  for (const p of projects) {
+    const link = screen.getByRole("link", { name: new RegExp(p.name, "i") });
+    expect(link).toHaveAttribute("href", p.url);
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
   }
 });
 
@@ -25,6 +36,26 @@ test("does not render cut projects", () => {
 test("renders every project's screenshot", () => {
   render(<Work />);
   for (const p of projects) {
-    expect(screen.getByAltText(p.alt)).toBeInTheDocument();
+    // The still appears twice by design: once in the row for touch and small
+    // screens, once in the sticky preview stack for large ones.
+    expect(screen.getAllByAltText(p.alt).length).toBeGreaterThan(0);
   }
+});
+
+test("hovering a row makes it the active preview", async () => {
+  const user = userEvent.setup();
+  render(<Work />);
+
+  const second = screen.getByRole("link", { name: new RegExp(projects[1].name, "i") });
+  await user.hover(second);
+
+  // The preview caption names whichever project is active.
+  const captions = screen.getAllByText(new RegExp(projects[1].name));
+  expect(captions.length).toBeGreaterThan(1);
+});
+
+test("links to the Zinc North case study rather than repeating it", () => {
+  render(<Work />);
+  const caseStudy = screen.getByRole("link", { name: /before and after/i });
+  expect(caseStudy).toHaveAttribute("href", "#rebuild");
 });

@@ -5,9 +5,13 @@ import { useEffect, useState } from "react";
 const GLYPHS =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/\\<>[]{}#$%&*+=_|~^";
 
-const SCRAMBLE_MS = 260;
-export const STAGGER_MS = 14;
-const FRAME_MS = 50;
+// Timing: each character churns for SCRAMBLE_MS before locking, and each
+// successive character starts STAGGER_MS later, so the resolve sweeps
+// left-to-right. Two lines chained gives roughly 1.9s end to end — slow
+// enough to read as deliberate rather than a flicker on load.
+const SCRAMBLE_MS = 560;
+const STAGGER_MS = 24;
+const FRAME_MS = 55;
 
 type Cell = { ch: string; locked: boolean };
 
@@ -22,11 +26,19 @@ type Cell = { ch: string; locked: boolean };
 export default function Decode({
   text,
   className,
-  delay = 0,
+  indexOffset = 0,
 }: {
   text: string;
   className?: string;
-  delay?: number;
+  /**
+   * How many characters precede this run in the overall headline. Chaining two
+   * runs by offset keeps the resolve sweeping continuously across both.
+   *
+   * Deliberately a character count rather than a delay in milliseconds: the
+   * caller is a server component, and importing a timing constant from this
+   * "use client" module would hand it a client reference instead of a number.
+   */
+  indexOffset?: number;
 }) {
   const [cells, setCells] = useState<Cell[] | null>(null);
 
@@ -35,7 +47,8 @@ export default function Decode({
     // absence should mean "skip the animation", never "throw".
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches !== false) return;
 
-    const total = delay + SCRAMBLE_MS + text.length * STAGGER_MS;
+    const revealAt = (i: number) => SCRAMBLE_MS + (indexOffset + i) * STAGGER_MS;
+    const total = revealAt(text.length);
     let raf = 0;
     let start = 0;
     let last = -Infinity;
@@ -51,8 +64,7 @@ export default function Decode({
         setCells(
           [...text].map((ch, i) => {
             if (ch === " ") return { ch, locked: true };
-            const revealAt = delay + SCRAMBLE_MS + i * STAGGER_MS;
-            if (elapsed >= revealAt) return { ch, locked: true };
+            if (elapsed >= revealAt(i)) return { ch, locked: true };
             return { ch: GLYPHS[(Math.random() * GLYPHS.length) | 0], locked: false };
           }),
         );
@@ -64,7 +76,7 @@ export default function Decode({
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [text, delay]);
+  }, [text, indexOffset]);
 
   if (cells === null) return <span className={className}>{text}</span>;
 
