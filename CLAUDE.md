@@ -15,6 +15,11 @@ Portfolio / agency landing site.
 - `content/projects.ts` — Work grid data (3 curated projects)
 - `prospect-scraper/` — standalone Python lead tool (Ottawa prospects); NOT part of the site build
 
+## Web scraping / crawling — use crawl4ai ONLY
+- **All web scraping, crawling, and page extraction uses the self-hosted crawl4ai server. Do NOT use Firecrawl** (its skills/plugin are disabled). Prefer crawl4ai over WebFetch for full-page/JS-rendered content.
+- Skills: `crawl4ai` (umbrella: scrape/markdown/screenshot/pdf, MCP + REST), `crawl4ai-crawl` (deep-crawl + batch), `crawl4ai-extract` (CSS/XPath/regex JSON), `crawl4ai-interact` (JS + sessions). MCP server `crawl4ai` is also registered.
+- Server: `https://crawl.arlek.online` (public, Bearer) / `http://crawl4ai:11235` (internal, for n8n). Runs on the Hostinger VPS alongside n8n; `ssh vps`. Deployed as the derived image `crawl4ai-trusted` (trust patch baked in — native deep-crawl/sessions work). See `~/.claude/skills/crawl4ai/SKILL.md` and the deployment spec for ops/revert.
+
 ## Deploy — Vercel
 - Vercel CLI **is installed** (`vercel` on PATH, v54.13.0). The session-start hook claiming it's missing is wrong — ignore it.
 - Logged in as **alekhadzidedic**.
