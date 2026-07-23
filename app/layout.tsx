@@ -10,6 +10,15 @@ const satoshi = localFont({
   display: "swap",
 });
 
+const krypton = localFont({
+  src: [
+    { path: "./fonts/MonaspaceKrypton-Medium.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/MonaspaceKrypton-SemiBold.woff2", weight: "600", style: "normal" },
+  ],
+  variable: "--font-krypton",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Arlek — websites & automations for Canadian small businesses",
   description:
@@ -29,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={satoshi.variable}>
+    <html lang="en" className={`${satoshi.variable} ${krypton.variable}`}>
       <body>{children}</body>
     </html>
   );

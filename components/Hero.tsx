@@ -1,9 +1,18 @@
+import Decode, { STAGGER_MS } from "./Decode";
+
+const LINE_1 = "Websites and automation";
+const LINE_2 = "for Canadian small businesses.";
+
 export default function Hero() {
   return (
-    <section className="border-b border-line px-5 pb-9 pt-14 md:px-10 md:pb-[56px] md:pt-[88px]">
-      <h1 className="max-w-[19ch] text-[clamp(38px,5.2vw,76px)] font-semibold leading-[1.02] tracking-[-0.03em]">
-        Websites and automation{" "}
-        <span className="text-fg-3">for Canadian small businesses.</span>
+    <section className="border-b border-line px-5 pb-9 pt-14 md:px-10 md:pb-14 md:pt-[5.5rem]">
+      <h1 className="max-w-[26ch] font-mono text-[clamp(1.75rem,4.6vw,4rem)] font-semibold leading-[1.14] tracking-[-0.03em]">
+        <Decode text={LINE_1} />{" "}
+        <Decode
+          text={LINE_2}
+          className="text-fg-3"
+          delay={LINE_1.length * STAGGER_MS}
+        />
       </h1>
     </section>
   );

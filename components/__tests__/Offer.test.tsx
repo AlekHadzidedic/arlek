@@ -15,5 +15,7 @@ test("renders the offer section head and all service titles", () => {
 
 test("renders the about strip with the Ottawa line", () => {
   render(<About />);
-  expect(screen.getByText(/Ottawa-based developer/)).toBeInTheDocument();
+  expect(
+    screen.getByText(/one-person web practice in Ottawa/)
+  ).toBeInTheDocument();
 });

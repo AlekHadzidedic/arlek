@@ -30,9 +30,13 @@ export default function Offer() {
               i > 0 ? "md:border-l md:border-line md:pl-6" : ""
             } ${i < services.length - 1 ? "md:pr-6" : ""}`}
           >
-            <div className="text-2xl font-medium tabular-nums text-fg-3">{s.num}</div>
-            <div className="text-base font-semibold tracking-[-0.01em]">{s.title}</div>
-            <div className="text-[13px] leading-[1.45] text-fg-2">{s.desc}</div>
+            <div className="font-mono text-[1.375rem] font-medium tabular-nums text-fg-3">
+              {s.num}
+            </div>
+            <h3 className="font-mono text-[0.9375rem] font-semibold tracking-[-0.01em]">
+              {s.title}
+            </h3>
+            <p className="text-[0.8125rem] leading-[1.5] text-fg-2">{s.desc}</p>
           </div>
         ))}
       </section>
