@@ -11,13 +11,13 @@ export default function CTA() {
       <div className="flex flex-wrap justify-start gap-2.5 md:justify-end">
         <a
           href="mailto:hello@arlek.ca?subject=Website%20project"
-          className="inline-flex items-center gap-1.5 rounded-full bg-fg px-[1.125rem] py-2.5 font-mono text-[0.8125rem] font-semibold text-bg transition-opacity hover:opacity-80"
+          className="inline-flex min-h-[2.75rem] items-center gap-1.5 rounded-full bg-fg px-[1.125rem] py-2.5 font-mono text-[0.8125rem] font-semibold text-bg transition-opacity hover:opacity-80"
         >
           Start a project →
         </a>
         <a
           href="mailto:hello@arlek.ca?subject=Quick%20question"
-          className="inline-flex items-center gap-1.5 rounded-full border border-line-2 px-[1.125rem] py-2.5 font-mono text-[0.8125rem] font-semibold text-fg-2 transition-colors hover:border-fg hover:text-fg"
+          className="inline-flex min-h-[2.75rem] items-center gap-1.5 rounded-full border border-line-2 px-[1.125rem] py-2.5 font-mono text-[0.8125rem] font-semibold text-fg-2 transition-colors hover:border-fg hover:text-fg"
         >
           Send a note
         </a>

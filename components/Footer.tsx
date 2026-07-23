@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="py-1.5">© 2026 Arlek Studios</div>
       <a
         href="mailto:hello@arlek.ca"
-        className="inline-flex min-h-[1.75rem] items-center py-1.5 text-fg-3 transition-colors hover:text-fg"
+        className="inline-flex min-h-[2.75rem] items-center py-1.5 text-fg-3 transition-colors hover:text-fg"
       >
         hello@arlek.ca
       </a>

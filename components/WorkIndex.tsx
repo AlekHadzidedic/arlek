@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import type { Project } from "../content/projects";
+import DecryptFrame from "./DecryptFrame";
 
 /**
  * Shared by the row still and the sticky preview so both resolve to the same
@@ -20,9 +21,10 @@ const STILL_SIZES = "(min-width: 1024px) 26rem, 92vw";
  * kind and stack alongside the name — and a single preview panel does the
  * showing, so only one screenshot is on screen at a time.
  *
- * Below lg the preview panel is dropped and each row carries its own compact
- * still, because there is no hover on touch and a sticky panel has nowhere
- * to sit.
+ * Below lg the preview panel is dropped and each row carries its own still in
+ * the page's decrypt frame, because there is no hover on touch and a sticky
+ * panel has nowhere to sit. The frames are what keep three foreign-coloured
+ * screenshots from reading as three interruptions.
  */
 export default function WorkIndex({ projects }: { projects: Project[] }) {
   const [active, setActive] = useState(0);
@@ -39,7 +41,7 @@ export default function WorkIndex({ projects }: { projects: Project[] }) {
               rel="noopener noreferrer"
               onMouseEnter={() => setActive(i)}
               onFocus={() => setActive(i)}
-              className="group flex flex-col gap-3 border-b border-line py-4 transition-colors hover:border-line-2 lg:flex-row lg:items-baseline lg:gap-6 lg:py-5"
+              className="group flex flex-col gap-2.5 border-b border-line py-4 transition-colors hover:border-line-2 lg:flex-row lg:items-baseline lg:gap-6 lg:py-5"
             >
               <span
                 aria-hidden="true"
@@ -54,7 +56,7 @@ export default function WorkIndex({ projects }: { projects: Project[] }) {
                 {p.name}
               </h3>
 
-              <span className="flex-1 text-[0.8125rem] leading-[1.45] text-fg-2">
+              <span className="flex-1 text-[0.9375rem] leading-[1.5] text-fg-2 lg:text-[0.8125rem] lg:leading-[1.45]">
                 {p.tagline}
               </span>
 
@@ -67,19 +69,22 @@ export default function WorkIndex({ projects }: { projects: Project[] }) {
 
               <span
                 aria-hidden="true"
-                className="hidden font-mono text-[0.6875rem] text-fg-3 transition-colors group-hover:text-accent lg:inline"
+                className="hidden font-mono text-[0.6875rem] text-fg-3 transition-colors group-hover:text-fg lg:inline"
               >
                 ↗
               </span>
 
-              {/* Touch and small-screen fallback for the sticky preview. */}
-              <span className="relative mt-1 block aspect-[16/9] w-full overflow-hidden rounded-md border border-line lg:hidden">
-                <Image
+              {/* Touch and small-screen stand-in for the sticky preview. No
+                  link inside it — the whole row is already the anchor. */}
+              <span className="mt-1.5 block lg:hidden">
+                <DecryptFrame
                   src={p.image}
                   alt={p.alt}
-                  fill
+                  label={p.name}
+                  meta={p.stack}
+                  aspect="aspect-[16/9]"
                   sizes={STILL_SIZES}
-                  className="object-cover object-top"
+                  priority={i === 0}
                 />
               </span>
             </a>
@@ -98,24 +103,35 @@ export default function WorkIndex({ projects }: { projects: Project[] }) {
         ) : null}
       </ul>
 
+      {/* Same chrome as the row frames, so the two ways of showing work read as
+          one device at different sizes. The preview is always resolved: it
+          shows whatever row is selected, and selection is the reveal. */}
       <div className="hidden lg:sticky lg:top-12 lg:block">
-        <div className="relative aspect-[16/10] overflow-hidden rounded-lg border border-line-2">
-          {projects.map((p, i) => (
-            <Image
-              key={p.name}
-              src={p.image}
-              alt={p.alt}
-              fill
-              sizes={STILL_SIZES}
-              className={`object-cover object-top transition-opacity duration-300 ${
-                active === i ? "opacity-100" : "opacity-0"
-              }`}
-            />
-          ))}
-        </div>
-        <p className="mt-3 font-mono text-[0.6875rem] uppercase tracking-[0.08em] text-fg-3">
-          {preview.name} <span className="text-fg-3">· {preview.stack}</span>
-        </p>
+        <figure className="overflow-hidden rounded-md border border-line-2 bg-bg-2">
+          <figcaption className="flex items-center gap-1.5 border-b border-line px-2.5 py-2 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.08em]">
+            <span aria-hidden="true" className="text-accent">
+              ▍
+            </span>
+            <span className="truncate">
+              <span className="text-fg-2">{preview.name}</span>
+              <span className="text-fg-3"> · {preview.stack}</span>
+            </span>
+          </figcaption>
+          <div className="relative aspect-[16/10] overflow-hidden">
+            {projects.map((p, i) => (
+              <Image
+                key={p.name}
+                src={p.image}
+                alt={p.alt}
+                fill
+                sizes={STILL_SIZES}
+                className={`object-cover object-top transition-opacity duration-300 ${
+                  active === i ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            ))}
+          </div>
+        </figure>
       </div>
     </section>
   );

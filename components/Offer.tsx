@@ -21,22 +21,24 @@ const services = [
 export default function Offer() {
   return (
     <div className="border-t border-line">
-      <SectionHead label="What I do" counter="01–03" />
-      <section className="grid grid-cols-1 gap-7 px-5 pb-12 pt-2 md:grid-cols-3 md:gap-0 md:px-10 md:pt-6">
+      <SectionHead label="What I do" counter="03 services" />
+      {/* The 01/02/03 numerals are gone: these three are alternatives, not
+          steps, and numbering them implied an order that does not exist. The
+          rules do the separating instead. */}
+      <section className="grid grid-cols-1 px-5 pb-12 pt-2 md:grid-cols-3 md:px-10 md:pt-6">
         {services.map((s, i) => (
           <div
             key={s.num}
-            className={`flex flex-col gap-3 ${
+            className={`flex flex-col gap-2.5 border-t border-line py-5 md:border-t-0 md:py-0 ${
               i > 0 ? "md:border-l md:border-line md:pl-6" : ""
             } ${i < services.length - 1 ? "md:pr-6" : ""}`}
           >
-            <div className="font-mono text-[1.375rem] font-medium tabular-nums text-fg-3">
-              {s.num}
-            </div>
-            <h3 className="font-mono text-[0.9375rem] font-semibold tracking-[-0.01em]">
+            <h3 className="font-mono text-[1.0625rem] font-semibold tracking-[-0.01em] md:text-[0.9375rem]">
               {s.title}
             </h3>
-            <p className="text-[0.8125rem] leading-[1.5] text-fg-2">{s.desc}</p>
+            <p className="text-[0.9375rem] leading-[1.55] text-fg-2 md:text-[0.8125rem] md:leading-[1.5]">
+              {s.desc}
+            </p>
           </div>
         ))}
       </section>

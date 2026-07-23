@@ -23,6 +23,40 @@
   }
 }
 
+@layer utilities {
+  /**
+   * Horizontal scanlines, laid over a screenshot while it is still
+   * "encrypted". Fine enough to read as a display artefact rather than as
+   * stripes, and gone once the image resolves.
+   */
+  .scanlines::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(8, 8, 9, 0.5) 0px,
+      rgba(8, 8, 9, 0.5) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+
+  /**
+   * The one live element in view: a block cursor blinking at the pace of a
+   * terminal, not of a notification.
+   */
+  .cursor-blink {
+    animation: cursor-blink 1.15s steps(1, end) infinite;
+  }
+}
+
+@keyframes cursor-blink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
