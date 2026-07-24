@@ -14,10 +14,14 @@ test("renders every project as an index row with its tagline and stack", () => {
 
 test("every row links out to the live site", () => {
   render(<Work />);
+  const links = screen.getAllByRole("link");
   for (const p of projects) {
-    const link = screen.getByRole("link", { name: new RegExp(p.name, "i") });
-    expect(link).toHaveAttribute("href", p.url);
-    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    // Matched by destination rather than by name: the case-study link names
+    // its project too, so a name regex would match two different links.
+    const row = links.find((l) => l.getAttribute("href") === p.url);
+    expect(row).toBeDefined();
+    expect(row).toHaveAttribute("rel", "noopener noreferrer");
+    expect(row).toHaveTextContent(p.name);
   }
 });
 
@@ -37,7 +41,7 @@ test("renders every project's screenshot", () => {
   render(<Work />);
   for (const p of projects) {
     // The still appears twice by design: once in the row for touch and small
-    // screens, once in the sticky preview stack for large ones.
+    // screens, once in the preview column's cross-fade stack for large ones.
     expect(screen.getAllByAltText(p.alt).length).toBeGreaterThan(0);
   }
 });
@@ -54,8 +58,9 @@ test("hovering a row makes it the active preview", async () => {
   expect(captions.length).toBeGreaterThan(1);
 });
 
-test("links to the Zinc North case study rather than repeating it", () => {
+test("closes the index with a link to the Zinc North case-study page", () => {
   render(<Work />);
-  const caseStudy = screen.getByRole("link", { name: /before and after/i });
-  expect(caseStudy).toHaveAttribute("href", "#rebuild");
+  const caseStudy = screen.getByRole("link", { name: /case study/i });
+  expect(caseStudy).toHaveAttribute("href", "/work/zinc-north");
+  expect(caseStudy).toHaveTextContent(/before and after/i);
 });

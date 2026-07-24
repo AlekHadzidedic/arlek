@@ -79,6 +79,11 @@ function useRevealed(ref: React.RefObject<HTMLElement | null>, once: boolean) {
     const reduced =
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches !== false;
     if (reduced || typeof IntersectionObserver === "undefined") {
+      // Deliberately set after mount rather than from a state initialiser:
+      // the server has no matchMedia, so deciding this during the first render
+      // would make the client's markup disagree with the server's. One extra
+      // render on mount is the price of not hydrating a mismatch.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRevealed(true);
       return;
     }

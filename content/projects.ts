@@ -12,7 +12,7 @@ export type Project = {
   image: string;
   alt: string;
   url: string;
-  /** Anchor of an in-page case study, where one exists. */
+  /** Path of the case study page, where one exists. */
   caseStudy?: string;
 };
 
@@ -28,7 +28,7 @@ export const projects: Project[] = [
     image: "/work/zinc-north-after.jpeg",
     alt: "Zinc North homepage — hero section of the rebuilt site",
     url: "https://zincnorth.ca",
-    caseStudy: "#rebuild",
+    caseStudy: "/work/zinc-north",
   },
   {
     name: "PianoChords",
