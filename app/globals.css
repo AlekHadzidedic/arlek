@@ -50,6 +50,26 @@
   .cursor-blink {
     animation: cursor-blink 1.15s steps(1, end) infinite;
   }
+
+  /**
+   * A thin, dark scrollbar for the before/after frame. The OS default bar is a
+   * pale slab that reads as chrome from another application; this keeps the
+   * scroll affordance visible without breaking the terminal surface.
+   */
+  .wipe-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-2) transparent;
+  }
+  .wipe-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+  .wipe-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-line-2);
+    border-radius: 4px;
+  }
+  .wipe-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 @keyframes cursor-blink {

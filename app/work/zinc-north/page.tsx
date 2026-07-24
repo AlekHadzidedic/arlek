@@ -18,28 +18,38 @@ const TITLE = "Zinc North";
 const SUBTITLE = "rebuilt from a Wix template.";
 
 /**
- * What actually changed, written as a diff.
+ * The rebuild stated as outcomes rather than a line-by-line diff.
  *
- * The wipe above shows the difference; these name it. Every line is legible in
- * the comparison, so the words make the argument and the picture corroborates
- * it — not the other way round.
+ * The wipe above already shows the visual change; naming it a second time as a
+ * −/+ diff was redundant and leaned on the weakest argument (that the old
+ * headline "could describe any shop"). These name what the work produced —
+ * speed, structure, positioning — each with a specific the reader can check.
  */
-const changes: { before: string; after: string }[] = [
+const outcomes: { label: string; detail: string }[] = [
   {
-    before: "“Exceptional plating and coating” — true of any shop",
-    after: "“Precision plating for Northern Ontario's toughest jobs”",
+    label: "Speed",
+    detail:
+      "First paint in roughly 0.3 seconds, served from Cloudflare's edge — a purpose-built front end in place of a shared template runtime.",
   },
   {
-    before: "One quote button, tucked into a corner",
-    after: "Two ways to act, both above the fold",
+    label: "Layout",
+    detail:
+      "A modern page built for this shop, off the stock theme it had shared with thousands of other Wix sites.",
   },
   {
-    before: "Wix template on a theme shared with thousands of sites",
-    after: "Custom build, served from Cloudflare's edge",
+    label: "Positioning",
+    detail:
+      "The hero names the market the shop serves — precision plating for Northern Ontario's toughest jobs.",
   },
   {
-    before: "Nothing in the hero backing the claim",
-    after: "Years, customers, and capacity, stated in the hero",
+    label: "Conversion",
+    detail:
+      "Two quote paths above the fold, where the old layout carried a single button tucked into a corner.",
+  },
+  {
+    label: "Proof",
+    detail:
+      "Twenty-six years, 400+ manufacturers, and 10,000+ parts processed, stated in the hero instead of below the fold.",
   },
 ];
 
@@ -82,13 +92,12 @@ export default function ZincNorthCaseStudy() {
           </h1>
 
           <p className="mt-5 max-w-[62ch] text-[0.9375rem] leading-[1.6] text-fg-2">
-            Zinc North ran on a stock Wix template: a theme shared with
-            thousands of other sites, a headline that could have described any
-            plating shop, and the numbers that make the case sitting below the
-            fold. The rebuild reorganised the page around what the shop
-            actually sells and replaced the interface end to end. It now runs
-            on Cloudflare&apos;s edge and paints its first screen in about
-            three tenths of a second.
+            Zinc North&apos;s previous site ran on a stock Wix theme. The
+            rebuild reorganised the page around the services the shop sells,
+            moved its operating figures — years in business, manufacturers
+            served, parts processed — into the hero, and reimplemented the
+            front end on Cloudflare Workers. First contentful paint on the
+            production site measures roughly 0.3 seconds.
           </p>
 
           <a
@@ -121,19 +130,23 @@ export default function ZincNorthCaseStudy() {
         </section>
 
         <div className="border-t border-line">
-          <SectionHead label="Before and after" counter="Drag to compare" />
+          <SectionHead label="Before and after" counter="Drag · scroll" />
           <section className="px-5 pb-10 pt-2 md:px-10 md:pb-12">
-            {/* One rectangle, both states, same scale. The comparison the page
-                exists for.
+            {/* One rectangle, both states, same scale — the comparison the page
+                exists for. The frame scrolls through the whole of each page;
+                drag the handle to wipe between them at any height.
 
                 Capped rather than run full-bleed: at 1440 the section is
-                1360px wide, and a 16/10 frame across all of it stands 850px
-                tall — taller than the viewport, so the wipe and its own
-                caption bar could not be seen at the same time. */}
+                1360px wide, and a screenshot that wide leaves the two pages too
+                small to read side of the wipe. 58rem keeps the type legible. */}
             <div className="max-w-[58rem]">
               <BeforeAfterSlider
                 before="/work/zinc-before-full.jpeg"
                 after="/work/zinc-after-full.jpeg"
+                beforeW={1425}
+                beforeH={3183}
+                afterW={1425}
+                afterH={3745}
                 beforeAlt="Zinc North's original Wix site — a generic stock headline over a diagonal texture, thin nav, one faint call to action"
                 afterAlt="The rebuilt zincnorth.ca — a specific headline naming the service area, two calls to action, and a row of numbers directly beneath"
                 beforeLabel="Before"
@@ -145,7 +158,7 @@ export default function ZincNorthCaseStudy() {
             </div>
 
             <p className="mt-3.5 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-fg-3">
-              Full page:{" "}
+              Open full size:{" "}
               <a
                 href="/work/zinc-before-full.jpeg"
                 target="_blank"
@@ -168,34 +181,23 @@ export default function ZincNorthCaseStudy() {
         </div>
 
         <div className="border-t border-line">
-          <SectionHead label="What changed" counter="04 lines" />
+          <SectionHead label="Outcomes" counter="05" />
           <section className="px-5 pb-10 pt-2 md:px-10 md:pb-12">
-            {/* Column labels only exist where there are columns. At phone the
-                −/+ glyphs label the two halves themselves. */}
-            <div className="hidden grid-cols-2 border-t border-line font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-fg-3 md:grid">
-              <span className="py-2.5 pr-6">Before</span>
-              <span className="border-l border-line py-2.5 pl-6">After</span>
-            </div>
-
-            <dl className="divide-y divide-line border-y border-line font-mono text-[0.8125rem] leading-[1.5] md:border-t-0">
-              {changes.map((c) => (
-                <div key={c.after} className="md:grid md:grid-cols-2">
-                  <dt className="flex gap-2.5 pb-1 pt-3.5 text-fg-3 md:py-3.5 md:pr-6">
-                    <span aria-hidden="true" className="select-none">
-                      −
-                    </span>
-                    <span className="line-through decoration-fg-3">
-                      {c.before}
-                    </span>
+            {/* Outcomes, not a diff: a fixed label column and a plain-language
+                detail. The label stays mono/uppercase like the rest of the
+                page's meta; the detail carries the specific. Ruled rows keep
+                the terminal-ledger read without reintroducing −/+ theatre. */}
+            <dl className="divide-y divide-line border-y border-line">
+              {outcomes.map((o) => (
+                <div
+                  key={o.label}
+                  className="py-3.5 md:grid md:grid-cols-[8.5rem_1fr] md:gap-6 md:py-4"
+                >
+                  <dt className="font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-fg-3">
+                    {o.label}
                   </dt>
-                  <dd className="flex gap-2.5 pb-3.5 text-fg md:border-l md:border-line md:py-3.5 md:pl-6">
-                    <span
-                      aria-hidden="true"
-                      className="select-none text-accent"
-                    >
-                      +
-                    </span>
-                    <span>{c.after}</span>
+                  <dd className="mt-1.5 text-[0.9375rem] leading-[1.55] text-fg-2 md:mt-0">
+                    {o.detail}
                   </dd>
                 </div>
               ))}

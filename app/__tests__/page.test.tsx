@@ -34,16 +34,16 @@ test("headings form an outline with no skipped levels", () => {
 test("the rebuild no longer sits on the landing page", () => {
   render(<Home />);
   expect(screen.queryByText(/The final result exceeded my expectations/)).toBeNull();
-  expect(screen.queryByText("What changed")).toBeNull();
+  expect(screen.queryByText("Outcomes")).toBeNull();
 });
 
-test("the case study states the diff, shows both pages, and quotes Eric", () => {
+test("the case study names outcomes, shows both pages, and quotes Eric", () => {
   render(<ZincNorth />);
   expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Zinc North");
-  expect(screen.getByText("What changed")).toBeInTheDocument();
-  expect(
-    screen.getByText("“Precision plating for Northern Ontario's toughest jobs”"),
-  ).toBeInTheDocument();
+  // Outcomes replace the old −/+ diff: benefits named, each with a specific.
+  expect(screen.getByText("Outcomes")).toBeInTheDocument();
+  expect(screen.getByText("Positioning")).toBeInTheDocument();
+  expect(screen.getByText(/Two quote paths above the fold/)).toBeInTheDocument();
   // One rectangle holds both states now, so each screenshot appears once.
   expect(screen.getByAltText(/original Wix/i)).toBeInTheDocument();
   expect(screen.getByAltText(/rebuilt zincnorth\.ca/i)).toBeInTheDocument();
