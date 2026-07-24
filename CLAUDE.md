@@ -20,6 +20,13 @@ Portfolio / agency landing site.
 - Logged in as **alekhadzidedic**.
 - Vercel MCP tools also available (`mcp__plugin_vercel_vercel__*`, load via ToolSearch).
 - Deploy: `vercel deploy --prod --yes` from repo root. Auto-detects Next.js + pnpm.
+- Pushing `main` also deploys production (GitHub integration is connected), so a push and a `--prod` deploy are the same event — do not do both.
+
+## Workflow on this repo
+- **Ship straight to `main`. No PRs, no preview deploys, no review branches.** Verify locally first — `pnpm build`, `pnpm test`, and a look at the rendered page — then push. If a background-session guard forces a worktree, finish there, fast-forward `main`, push, and delete the branch. Do not offer a preview URL as a substitute for shipping.
+  - Why: preview deploys on this project are gated by Vercel Authentication (302 → login), so they are not viewable on a phone and buy nothing. Deploying from a worktree with no `.vercel` link also creates a stray Vercel project that then has to be deleted.
+- **Tune visuals on `pnpm dev`, not through rebuild cycles.** Adjust values live in the browser (Playwright `browser_evaluate`), confirm with one screenshot, then bake the final numbers into the source and build once. Never `build → restart → screenshot` per tweak.
+- Screenshot budget when checking a change: viewport crops at two widths; one full-page shot at the end if it is genuinely needed. Prefer the numbers in `design-audit/report.json` over extra screenshots for contrast/tap-target gates.
 
 ## Domain — LIVE
 - **`https://arlek.ca`** and **`https://www.arlek.ca`** — live on Vercel, HTTP 200, Vercel-issued TLS.
