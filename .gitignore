@@ -14,3 +14,4 @@ node_modules/
 # Test/screenshot scratch
 .playwright-mcp/
 /*.png
+.vercel
