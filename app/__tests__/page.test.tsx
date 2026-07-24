@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import Home from "../page";
 import ZincNorth from "../work/zinc-north/page";
 
@@ -44,11 +44,24 @@ test("the case study states the diff, shows both pages, and quotes Eric", () => 
   expect(
     screen.getByText("“Precision plating for Northern Ontario's toughest jobs”"),
   ).toBeInTheDocument();
-  // Before and after each appear twice: cropped to the fold, then in full.
-  expect(screen.getAllByAltText(/original Wix/i)).toHaveLength(2);
-  expect(screen.getAllByAltText(/rebuilt zincnorth\.ca/i)).toHaveLength(2);
+  // One rectangle holds both states now, so each screenshot appears once.
+  expect(screen.getByAltText(/original Wix/i)).toBeInTheDocument();
+  expect(screen.getByAltText(/rebuilt zincnorth\.ca/i)).toBeInTheDocument();
   expect(screen.getByText(/The final result exceeded my expectations/)).toBeInTheDocument();
   expect(screen.getByText("Eric")).toBeInTheDocument();
+});
+
+test("the comparison wipe is operable without a pointer", () => {
+  render(<ZincNorth />);
+  const wipe = screen.getByRole("slider", { name: /drag to wipe/i });
+  expect(wipe).toHaveAttribute("aria-valuenow", "50");
+  fireEvent.keyDown(wipe, { key: "ArrowRight" });
+  expect(wipe).toHaveAttribute("aria-valuenow", "52");
+  // Home is the site as it was, End is the site as it shipped.
+  fireEvent.keyDown(wipe, { key: "Home" });
+  expect(wipe).toHaveAttribute("aria-valuenow", "100");
+  fireEvent.keyDown(wipe, { key: "End" });
+  expect(wipe).toHaveAttribute("aria-valuenow", "0");
 });
 
 test("the case study links back to the work index and out to the live site", () => {

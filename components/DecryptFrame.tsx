@@ -72,7 +72,7 @@ function useScramble(text: string, run: boolean) {
  * Either way, reduced motion and browsers without the observer get the plain
  * resolved image immediately.
  */
-function useRevealed(ref: React.RefObject<HTMLElement | null>, once: boolean) {
+export function useRevealed(ref: React.RefObject<HTMLElement | null>, once: boolean) {
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {

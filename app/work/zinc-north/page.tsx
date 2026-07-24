@@ -5,13 +5,13 @@ import TopBar from "../../../components/TopBar";
 import Footer from "../../../components/Footer";
 import CTA from "../../../components/CTA";
 import SectionHead from "../../../components/SectionHead";
-import DecryptFrame from "../../../components/DecryptFrame";
+import BeforeAfterSlider from "../../../components/BeforeAfterSlider";
 import Decode from "../../../components/Decode";
 
 export const metadata: Metadata = {
   title: "Zinc North — a Wix template, rebuilt | Arlek",
   description:
-    "A stock Wix template rebuilt from the ground up for an industrial plating shop in Sudbury: new structure, new copy, new code on Cloudflare Workers. Before and after, full page.",
+    "An industrial plating shop in Sudbury, moved off a stock Wix template: new layout, new interface, and a site that paints its first screen in about 0.3 seconds on Cloudflare's edge.",
 };
 
 const TITLE = "Zinc North";
@@ -20,9 +20,9 @@ const SUBTITLE = "rebuilt from a Wix template.";
 /**
  * What actually changed, written as a diff.
  *
- * The screenshots below ask the reader to spot the difference; this states it.
- * Every line here is legible in the shots that follow, so the words make the
- * argument and the pictures corroborate it — not the other way round.
+ * The wipe above shows the difference; these name it. Every line is legible in
+ * the comparison, so the words make the argument and the picture corroborates
+ * it — not the other way round.
  */
 const changes: { before: string; after: string }[] = [
   {
@@ -43,12 +43,14 @@ const changes: { before: string; after: string }[] = [
   },
 ];
 
-/** Facts, all of them drawn from the project record or the screenshots. */
+/**
+ * Three facts, each one checkable. The speed figure is a first-contentful-paint
+ * measured on the live site, not a target or a Lighthouse score.
+ */
 const facts: { k: string; v: string }[] = [
   { k: "Client", v: "Zinc North, Sudbury ON" },
-  { k: "Work", v: "Site rebuild" },
   { k: "Stack", v: "Cloudflare Workers" },
-  { k: "Live", v: "zincnorth.ca" },
+  { k: "Speed", v: "0.3 s to first paint" },
 ];
 
 const PULL = "The final result exceeded my expectations.";
@@ -79,9 +81,14 @@ export default function ZincNorthCaseStudy() {
             />
           </h1>
 
-          <p className="mt-5 max-w-[56ch] text-[0.9375rem] leading-[1.6] text-fg-2">
-            A stock Wix template, rebuilt from the ground up — new structure,
-            new copy, new code, served from Cloudflare&apos;s edge.
+          <p className="mt-5 max-w-[62ch] text-[0.9375rem] leading-[1.6] text-fg-2">
+            Zinc North ran on a stock Wix template: a theme shared with
+            thousands of other sites, a headline that could have described any
+            plating shop, and the numbers that make the case sitting below the
+            fold. The rebuild reorganised the page around what the shop
+            actually sells and replaced the interface end to end. It now runs
+            on Cloudflare&apos;s edge and paints its first screen in about
+            three tenths of a second.
           </p>
 
           <a
@@ -93,10 +100,10 @@ export default function ZincNorthCaseStudy() {
             Visit zincnorth.ca ↗
           </a>
 
-          {/* Stacked key/value lines at phone, four ruled columns at desktop —
+          {/* Stacked key/value lines at phone, three ruled columns at desktop —
               the same border-l split the rest of the site uses instead of
               boxes. */}
-          <dl className="mt-8 grid grid-cols-1 md:mt-10 md:grid-cols-4">
+          <dl className="mt-8 grid grid-cols-1 md:mt-10 md:grid-cols-3">
             {facts.map((f, i) => (
               <div
                 key={f.k}
@@ -114,26 +121,49 @@ export default function ZincNorthCaseStudy() {
         </section>
 
         <div className="border-t border-line">
-          <SectionHead label="The problem" counter="Wix template" />
+          <SectionHead label="Before and after" counter="Drag to compare" />
           <section className="px-5 pb-10 pt-2 md:px-10 md:pb-12">
-            <div className="flex max-w-[62ch] flex-col gap-4 text-[0.9375rem] leading-[1.6] text-fg-2">
-              <p>
-                Zinc North plates and coats parts for the mines, mills, and job
-                sites of Northern Ontario. The business was solid. The site was
-                a stock Wix template running a theme shared with thousands of
-                other sites.
-              </p>
-              <p>
-                The headline read{" "}
-                <span className="text-fg">
-                  &ldquo;Exceptional plating and coating&rdquo;
-                </span>{" "}
-                — true of any shop in the country. One quote button sat in the
-                corner of the nav. The numbers that actually make the case —
-                the years, the customers, the parts processed — were a screen
-                further down, below the fold.
-              </p>
+            {/* One rectangle, both states, same scale. The comparison the page
+                exists for.
+
+                Capped rather than run full-bleed: at 1440 the section is
+                1360px wide, and a 16/10 frame across all of it stands 850px
+                tall — taller than the viewport, so the wipe and its own
+                caption bar could not be seen at the same time. */}
+            <div className="max-w-[58rem]">
+              <BeforeAfterSlider
+                before="/work/zinc-before-full.jpeg"
+                after="/work/zinc-after-full.jpeg"
+                beforeAlt="Zinc North's original Wix site — a generic stock headline over a diagonal texture, thin nav, one faint call to action"
+                afterAlt="The rebuilt zincnorth.ca — a specific headline naming the service area, two calls to action, and a row of numbers directly beneath"
+                beforeLabel="Before"
+                afterLabel="After"
+                beforeMeta="Wix template"
+                afterMeta="zincnorth.ca"
+                sizes="(min-width: 1024px) 58rem, 92vw"
+              />
             </div>
+
+            <p className="mt-3.5 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-fg-3">
+              Full page:{" "}
+              <a
+                href="/work/zinc-before-full.jpeg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[2.75rem] items-center text-fg-3 underline decoration-line-2 underline-offset-4 transition-colors hover:text-fg"
+              >
+                before ↗
+              </a>{" "}
+              ·{" "}
+              <a
+                href="/work/zinc-after-full.jpeg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[2.75rem] items-center text-fg-3 underline decoration-line-2 underline-offset-4 transition-colors hover:text-fg"
+              >
+                after ↗
+              </a>
+            </p>
           </section>
         </div>
 
@@ -170,85 +200,6 @@ export default function ZincNorthCaseStudy() {
                 </div>
               ))}
             </dl>
-          </section>
-        </div>
-
-        <div className="border-t border-line">
-          <SectionHead label="Above the fold" counter="Hero" />
-          <section className="px-5 pb-10 pt-2 md:px-10 md:pb-12">
-            <p className="mb-5 max-w-[56ch] text-[0.9375rem] leading-[1.6] text-fg-2">
-              The same crop of both homepages: everything a visitor sees before
-              they scroll.
-            </p>
-            {/* The comparison that has to land. Cropped to one screen of each
-                page and kept tight enough that both frames sit on a phone
-                screen at once — a difference you have to scroll between is not
-                a comparison. `revealOnce` on both, because half a decoded pair
-                is useless. */}
-            <div className="grid gap-3 md:grid-cols-2 md:gap-5">
-              <DecryptFrame
-                src="/work/zinc-before-full.jpeg"
-                alt="Zinc North's original Wix site above the fold — a generic stock headline over a diagonal texture, thin nav, one faint call to action"
-                label="Before"
-                meta="Wix template"
-                aspect="aspect-[16/10]"
-                width={1425}
-                height={3183}
-                sizes="(min-width: 768px) 46vw, 92vw"
-                revealOnce
-              />
-              <DecryptFrame
-                src="/work/zinc-after-full.jpeg"
-                alt="The rebuilt zincnorth.ca above the fold — a specific headline naming the service area, two calls to action, and a row of numbers directly beneath"
-                label="After"
-                meta="zincnorth.ca"
-                aspect="aspect-[16/10]"
-                width={1425}
-                height={3745}
-                sizes="(min-width: 768px) 46vw, 92vw"
-                emphasis
-                revealOnce
-              />
-            </div>
-          </section>
-        </div>
-
-        <div className="border-t border-line">
-          <SectionHead label="Top to bottom" counter="Full page" />
-          <section className="px-5 pb-10 pt-2 md:px-10 md:pb-12">
-            <p className="mb-5 max-w-[56ch] text-[0.9375rem] leading-[1.6] text-fg-2">
-              Both homepages in full, at the same scale. Open either one for the
-              original capture.
-            </p>
-            {/* No crop here: the whole page, at its own proportions, so the
-                change in structure is visible as shape before it is read as
-                text. These use the default while-read resolve — scrolling a
-                tall pair, only the one being looked at is in colour. */}
-            <div className="grid items-start gap-6 md:grid-cols-2 md:gap-5">
-              <DecryptFrame
-                src="/work/zinc-before-full.jpeg"
-                alt="The full original Wix homepage for Zinc North, top to bottom"
-                label="Before"
-                meta="Wix template"
-                href="/work/zinc-before-full.jpeg"
-                aspect="aspect-[1425/3183]"
-                width={1425}
-                height={3183}
-                sizes="(min-width: 768px) 46vw, 92vw"
-              />
-              <DecryptFrame
-                src="/work/zinc-after-full.jpeg"
-                alt="The full rebuilt zincnorth.ca homepage, top to bottom"
-                label="After"
-                meta="zincnorth.ca"
-                href="/work/zinc-after-full.jpeg"
-                aspect="aspect-[1425/3745]"
-                width={1425}
-                height={3745}
-                sizes="(min-width: 768px) 46vw, 92vw"
-                emphasis
-              />
-            </div>
           </section>
         </div>
 

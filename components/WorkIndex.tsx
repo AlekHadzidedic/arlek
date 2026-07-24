@@ -109,17 +109,32 @@ export default function WorkIndex({ projects }: { projects: Project[] }) {
 
         {/* The index terminates on a rule like every other row rather than
             trailing off. It is a page now, not an anchor further down this one,
-            so it points sideways. */}
+            so it points sideways.
+
+            Set at row weight rather than caption weight: at 0.6875rem uppercase
+            grey it read as a footnote under the list, and the one piece of
+            proof on the site is worth more than a footnote. The accent arrow
+            and the second line say plainly that it goes somewhere. */}
         {projects[0]?.caseStudy ? (
           <li>
             <a
               href={projects[0].caseStudy}
-              className="flex min-h-[2.75rem] items-center gap-2.5 border-b border-line py-4 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-fg-3 transition-colors hover:border-line-2 hover:text-accent lg:gap-6 lg:pr-8 xl:gap-8 xl:py-5 xl:pr-10"
+              className="group flex min-h-[2.75rem] items-baseline gap-2.5 border-b border-line py-4 transition-colors hover:border-line-2 lg:gap-6 lg:pr-8 xl:gap-8 xl:py-5 xl:pr-10"
             >
-              <span aria-hidden="true" className="lg:w-[1.5rem] lg:shrink-0">
+              <span
+                aria-hidden="true"
+                className="font-mono text-[0.6875rem] text-accent lg:w-[1.5rem] lg:shrink-0"
+              >
                 →
               </span>
-              <span>Zinc North case study — before and after</span>
+              <span className="flex flex-col gap-1">
+                <span className="font-mono text-[0.9375rem] font-semibold tracking-[-0.01em] text-fg-2 transition-colors group-hover:text-accent">
+                  Read the Zinc North case study
+                </span>
+                <span className="font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-fg-3">
+                  Before and after, drag to compare
+                </span>
+              </span>
             </a>
           </li>
         ) : null}
